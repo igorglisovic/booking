@@ -1,0 +1,53 @@
+main {
+  display: flex;
+  gap: 2rem;
+  position: relative;
+  width: fit-content;
+}
+
+.calendar {
+  text-align: center;
+  position: relative;
+}
+
+.calendar caption {
+  font-size: 0.9rem;
+}
+
+.calendar td {
+  padding: 4px;
+}
+
+.calendar tbody td:not(:empty):hover {
+  cursor: pointer;
+  background-color: #eee;
+}
+
+.calendar thead td {
+  font-size: 0.85rem;
+}
+
+.next-arrow,
+.back-arrow {
+  cursor: pointer;
+  align-self: flex-start;
+  position: absolute;
+}
+
+.next-arrow {
+  right: 0;
+}
+
+.back-arrow {
+  left: 0;
+  z-index: 99999;
+}
+
+.selected {
+  background-color: #ccc;
+}
+
+.disabled {
+  cursor: default !important;
+  color: #afafaf;
+}
