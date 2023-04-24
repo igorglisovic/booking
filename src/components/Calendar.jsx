@@ -7,6 +7,7 @@ const Calendar = ({ year, month }) => {
   const [calendarCells, setCalendarCells] = useState([])
   const [yearAndMonth, setYearAndMonth] = useState()
   const [clickedDate, setClickedDate] = useState()
+  const [clickedDates, setClickedDates] = useState([])
   const [disabledDaysInMonth, setDisabledDaysInMonth] = useState()
 
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -17,7 +18,6 @@ const Calendar = ({ year, month }) => {
     const numberOfDaysInMonth = new Date(year, month, 0).getDate()
     let firstDayInMonth = new Date(year, month - 1, 1).getDay()
     const currentDayInMonth = new Date().getDate()
-    console.log(currentDayInMonth)
 
     const yearAndMonthStr = `${new Date(year, month - 1).toLocaleString(
       'default',
@@ -72,6 +72,7 @@ const Calendar = ({ year, month }) => {
                 ? true
                 : false,
             month,
+            selected: false,
           })
         }
 
@@ -79,25 +80,36 @@ const Calendar = ({ year, month }) => {
       }
     }
 
-    console.log(cells)
-
     setDisabledDaysInMonth(currentDayInMonth - 1)
     setCalendarRows(rows)
     setCalendarCells(cells)
   }, [month])
 
-  const onClickHandler = (e, j, i) => {
+  const onClickHandler = (_, j, i) => {
     const clickedCell = calendarCells[i * 7 + j]
     if (clickedCell.disabled || !clickedCell.value) return
 
-    console.log(calendarCells, i, j)
+    setClickedDates(prev => [...prev, clickedCell])
 
-    setClickedDate({
-      value: clickedCell.value,
-      month: clickedCell.month,
-    })
-    // console.log(clickedDate)
+    setClickedDate(clickedCell)
   }
+
+  useEffect(() => {
+    if (clickedDates.length === 1) {
+      setCalendarCells(calendarCells.map((cell, i)))
+    }
+
+    const result = clickedDates.every((curr, i, arr) => {
+      if (i === 0) {
+        return false
+      } else {
+        return curr.value > arr[i - 1].value
+      }
+    })
+
+    if (clickedDates.length >= 2) setClickedDates([])
+    console.log(result)
+  }, [clickedDates])
 
   return (
     <table className="calendar">
