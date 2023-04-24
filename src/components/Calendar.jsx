@@ -11,7 +11,7 @@ const Calendar = ({ year, month }) => {
 
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-  const currentYearAndMonth = new Date()
+  const currentDate = new Date()
 
   useEffect(() => {
     const numberOfDaysInMonth = new Date(year, month, 0).getDate()
@@ -64,12 +64,22 @@ const Calendar = ({ year, month }) => {
           firstDayInMonth <= date &&
           date - firstDayInMonth + 1 <= numberOfDaysInMonth
         ) {
-          cells.push(date - firstDayInMonth + 1)
+          cells.push({
+            value: date - firstDayInMonth + 1,
+            disabled:
+              currentDayInMonth - 1 > date - firstDayInMonth + 1 &&
+              month - 1 === currentDate.getMonth()
+                ? true
+                : false,
+            month,
+          })
         }
 
         date++
       }
     }
+
+    console.log(cells)
 
     setDisabledDaysInMonth(currentDayInMonth - 1)
     setCalendarRows(rows)
@@ -77,14 +87,16 @@ const Calendar = ({ year, month }) => {
   }, [month])
 
   const onClickHandler = (e, j, i) => {
-    if (e.target.classList.contains('disabled')) return
+    const clickedCell = calendarCells[i * 7 + j]
+    if (clickedCell.disabled || !clickedCell.value) return
+
+    console.log(calendarCells, i, j)
+
     setClickedDate({
-      day: e.target.innerText,
-      year: yearAndMonth,
-      j,
-      i,
+      value: clickedCell.value,
+      month: clickedCell.month,
     })
-    console.log(clickedDate)
+    // console.log(clickedDate)
   }
 
   return (
@@ -103,12 +115,14 @@ const Calendar = ({ year, month }) => {
             {calendarCells.slice(i * 7, i * 7 + 7).map((cell, j) => (
               <td
                 className={`${
-                  clickedDate?.j === j && clickedDate?.i === i ? 'selected' : ''
-                } ${disabledDaysInMonth >= cell ? 'disabled' : ''}`}
+                  clickedDate?.value === cell.value && cell.value
+                    ? 'selected'
+                    : ''
+                } ${cell.disabled ? 'disabled' : ''}`}
                 onClick={e => onClickHandler(e, j, i)}
                 key={j}
               >
-                {cell}
+                {cell.value}
               </td>
             ))}
           </tr>
