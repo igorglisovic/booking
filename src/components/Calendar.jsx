@@ -96,7 +96,9 @@ const Calendar = ({ year, month }) => {
 
   useEffect(() => {
     if (clickedDates.length === 1) {
-      setCalendarCells(calendarCells.map((cell, i)))
+      // calendarCells.map((cell, i) => {
+      //   setCalendarCells()
+      // })
     }
 
     const result = clickedDates.every((curr, i, arr) => {
