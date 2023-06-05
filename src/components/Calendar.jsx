@@ -67,7 +67,7 @@ const Calendar = ({ year, month }) => {
           cells.push({
             value: date - firstDayInMonth + 1,
             disabled:
-              currentDayInMonth - 1 > date - firstDayInMonth + 1 &&
+              currentDayInMonth > date - firstDayInMonth + 1 &&
               month - 1 === currentDate.getMonth()
                 ? true
                 : false,
@@ -95,10 +95,15 @@ const Calendar = ({ year, month }) => {
   }
 
   useEffect(() => {
+    // Highlight first clicked cell
     if (clickedDates.length === 1) {
-      // calendarCells.map((cell, i) => {
-      //   setCalendarCells()
-      // })
+      const newArr = calendarCells.map(cell =>
+        cell === clickedDate ? { ...cell, selected: true } : cell
+      )
+      setCalendarCells(newArr)
+    }
+
+    if (clickedDates.length === 2) {
     }
 
     const result = clickedDates.every((curr, i, arr) => {
@@ -109,8 +114,10 @@ const Calendar = ({ year, month }) => {
       }
     })
 
+    console.log(clickedDates)
+
+    // Clear selected cells after third click
     if (clickedDates.length >= 2) setClickedDates([])
-    console.log(result)
   }, [clickedDates])
 
   return (
@@ -128,11 +135,9 @@ const Calendar = ({ year, month }) => {
           <tr key={i}>
             {calendarCells.slice(i * 7, i * 7 + 7).map((cell, j) => (
               <td
-                className={`${
-                  clickedDate?.value === cell.value && cell.value
-                    ? 'selected'
-                    : ''
-                } ${cell.disabled ? 'disabled' : ''}`}
+                className={`${cell.selected ? 'selected' : ''} ${
+                  cell.disabled ? 'disabled' : ''
+                }`}
                 onClick={e => onClickHandler(e, j, i)}
                 key={j}
               >
